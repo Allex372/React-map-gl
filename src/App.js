@@ -1,5 +1,5 @@
-import React, {useRef, useState} from "react";
-import ReactMapGL, {Marker, Popup, Source, Layer} from 'react-map-gl';
+import React, {useRef, useState, useCallback} from "react";
+import ReactMapGL, {Marker, Popup, Source, Layer, FlyToInterpolator} from 'react-map-gl';
 import * as parkData from './data/Public_Drinking_Water_Fountains.json';
 import './App.css';
 import marker_img from './img/map_marker.png';
@@ -19,6 +19,15 @@ function App() {
 
     const [selectedPark, setSelectedPark] = useState(null)
 
+    const onSelectCity = useCallback(({longitude, latitude}) => {
+        setViewport({
+            longitude,
+            latitude,
+            zoom: 11,
+            transitionInterpolator: new FlyToInterpolator({speed: 1.2}),
+            transitionDuration: 'auto'
+        });
+    }, []);
 
     return <div>
         <ReactMapGL
@@ -28,6 +37,9 @@ function App() {
             onViewportChange={viewport => {
                 setViewport(viewport)
             }}>
+
+            {/********************MARKER WITH POPUP VARIANT***************************/}
+
 
             {
                 parkData.features.map(water => (
@@ -57,6 +69,12 @@ function App() {
                 </Popup>
             ) : null}
 
+            {/********************MARKER WITH POPUP VARIANT***************************/}
+
+
+            {/*************** CLUSTERS VARIANT(FROM BIG TO SMALL***************/}
+
+
             {/*<Source*/}
             {/*    id="earthquakes"*/}
             {/*    type="geojson"*/}
@@ -69,8 +87,10 @@ function App() {
             {/*    <Layer {...clusterCountLayer} />*/}
             {/*    <Layer {...unclusteredPointLayer} />*/}
             {/*</Source>*/}
+
+            {/*************** CLUSTERS VARIANT(FROM BIG TO SMALL***************/}
+
         </ReactMapGL>
-        <ControlPanel/>
     </div>
 }
 
